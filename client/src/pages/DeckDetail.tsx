@@ -5,6 +5,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Sprite } from '@/components/pixel/Sprite'
+import { emptyBox } from '@/components/pixel/sprites'
 import { EmptyState } from '@/components/flip/EmptyState'
 import { useDeck, useDeckMutations } from '@/hooks/useDecks'
 
@@ -79,7 +81,7 @@ export default function DeckDetail() {
       </div>
 
       {deck.cards.length === 0 ? (
-        <EmptyState title="This deck is empty" description="Add some cards to start studying." action={<Button render={<Link to={`/decks/${deck.id}/edit`} />} nativeButton={false}>Add cards</Button>} />
+        <EmptyState icon={<Sprite grid={emptyBox} className="size-16" />} title="This deck is empty" description="Add some cards to start studying." action={<Button render={<Link to={`/decks/${deck.id}/edit`} />} nativeButton={false}>Add cards</Button>} />
       ) : (
         <ul className="space-y-3">
           {deck.cards.map((c, i) => (

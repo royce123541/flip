@@ -1,5 +1,6 @@
 import { AlertTriangle, LogOut, Menu, Plus, User } from '@/components/pixel/icons'
 import { PixelLogo } from '@/components/pixel/Logo'
+import { ThemeToggle } from '@/components/pixel/ThemeToggle'
 import { signOut } from 'firebase/auth'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -46,6 +47,7 @@ export default function AppLayout() {
           </nav>
 
           <div className="ml-auto flex items-center gap-2">
+            <ThemeToggle />
             {user ? (
               <>
                 <Button render={<Link to="/decks/new" />} nativeButton={false} size="sm" className="hidden sm:inline-flex">

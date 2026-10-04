@@ -6,6 +6,7 @@ interface BasicFields {
   dueCards: number
   quizzesTaken: number
   accuracy: number | null
+  streak: { current: number; longest: number }
 }
 
 export interface BasicAnalytics extends BasicFields {
@@ -14,7 +15,6 @@ export interface BasicAnalytics extends BasicFields {
 
 export interface FullAnalytics extends BasicFields {
   full: true
-  streak: { current: number; longest: number }
   accuracyTrend: { date: string; accuracy: number; questions: number }[]
   reviewsPerDay: { date: string; count: number }[]
   mastery: { deckId: string; title: string; total: number; mastered: number; learning: number; notLearned: number }[]

@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createUserWithEmailAndPassword, GoogleAuthProvider, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
+import { GoogleMark } from '@/components/pixel/GoogleMark'
 import { PixelLogo } from '@/components/pixel/Logo'
+import { ThemeToggle } from '@/components/pixel/ThemeToggle'
 import { useForm } from 'react-hook-form'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -65,7 +67,8 @@ export default function Auth({ mode }: { mode: 'login' | 'signup' }) {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center p-4">
+    <div className="relative flex min-h-screen items-center justify-center p-4">
+      <ThemeToggle className="absolute top-4 right-4" />
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
           <PixelLogo className="mx-auto size-12" />
@@ -74,7 +77,7 @@ export default function Auth({ mode }: { mode: 'login' | 'signup' }) {
         </CardHeader>
         <CardContent className="space-y-4">
           <Button variant="outline" className="w-full" disabled={busy} onClick={() => run(() => signInWithPopup(auth, new GoogleAuthProvider()))}>
-            Continue with Google
+            <GoogleMark className="size-6" /> Continue with Google
           </Button>
           <div className="text-center text-xs text-muted-foreground">or</div>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>

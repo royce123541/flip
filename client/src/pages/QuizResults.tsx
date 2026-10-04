@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Stars, starsFor } from '@/components/flip/Stars'
 import { useAttempt } from '@/hooks/useStudy'
 
 export default function QuizResults() {
@@ -20,6 +21,7 @@ export default function QuizResults() {
       <div className="space-y-1 text-center">
         <p className="inline-block border-3 border-outline bg-primary px-6 py-2 text-5xl font-bold tabular-nums text-primary-foreground shadow-md">{pct}%</p>
         <p className="text-muted-foreground">{data.score} of {data.total} correct</p>
+        <Stars earned={starsFor(data.score / data.total)} className="pt-2" />
       </div>
 
       <div className="flex flex-wrap justify-center gap-2">

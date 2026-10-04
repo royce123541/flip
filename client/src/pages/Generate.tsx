@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Textarea } from '@/components/ui/textarea'
 import { FileDropzone } from '@/components/flip/FileDropzone'
+import { GenerateProgress } from '@/components/flip/GenerateProgress'
 import { UsageMeter } from '@/components/flip/UsageMeter'
 import { useGenerate, useMe, type GenerateResult } from '@/hooks/useGenerate'
 import { ApiError } from '@/lib/api'
@@ -103,6 +104,8 @@ export default function Generate() {
           )}
         </TabsContent>
       </Tabs>
+
+      {generate.isPending && <GenerateProgress source={generate.variables && 'file' in generate.variables ? 'pdf' : 'text'} />}
 
       {error && <p role="alert" className="text-sm text-destructive">{error}</p>}
       {outOfQuota && <p role="alert" className="text-sm text-destructive">You have used all your free generations this month. <Link className="underline" to="/pricing">Upgrade to Pro</Link> or <Link className="underline" to="/decks/new">create decks manually</Link>.</p>}

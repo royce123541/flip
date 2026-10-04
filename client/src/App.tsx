@@ -34,7 +34,7 @@ export default function App() {
               <Routes>
                 <Route path="/login" element={<Auth mode="login" />} />
                 <Route path="/signup" element={<Auth mode="signup" />} />
-                <Route path="/gallery" element={<Gallery />} />
+                {import.meta.env.DEV && <Route path="/gallery" element={<Gallery />} />}
                 <Route element={<AppLayout />}>
                   <Route path="/pricing" element={<Pricing />} />
                 </Route>

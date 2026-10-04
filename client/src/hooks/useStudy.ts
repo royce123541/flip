@@ -9,6 +9,8 @@ export interface StudyCard {
   deckTitle: string
   front: string
   back: string
+  /** Milliseconds until the card would come back, per grade. */
+  nextIn: Record<Grade, number>
 }
 
 export interface StudyQueue {
@@ -55,9 +57,29 @@ export function useReview() {
   const qc = useQueryClient()
   return useMutation({
     mutationFn: (v: { deckId: string; cardId: string; grade: Grade }) =>
-      api<{ due: string; interval: number }>('/study/review', { method: 'POST', body: JSON.stringify(v) }),
+      api<{ due: string; interval: number; reviewId: string }>('/study/review', { method: 'POST', body: JSON.stringify(v) }),
     // due counts on the dashboard / deck list are now stale
     onSuccess: () => qc.invalidateQueries({ queryKey: ['decks'] }),
+  })
+}
+
+export function useUndoReview() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: (reviewId: string) => api<void>('/study/undo', { method: 'POST', body: JSON.stringify({ reviewId }) }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['decks'] }),
+  })
+}
+
+export function useEditCard() {
+  const qc = useQueryClient()
+  return useMutation({
+    mutationFn: ({ deckId, cardId, front, back }: { deckId: string; cardId: string; front: string; back: string }) =>
+      api<{ id: string; front: string; back: string }>(`/decks/${deckId}/cards/${cardId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({ front, back }),
+      }),
+    onSuccess: (_card, v) => qc.invalidateQueries({ queryKey: ['deck', v.deckId] }),
   })
 }
 

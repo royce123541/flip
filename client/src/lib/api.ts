@@ -1,6 +1,7 @@
 import { auth } from './firebase'
 
-const BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:4000'
+// In production the server hosts the app, so API calls go to the same site (relative URLs).
+const BASE = import.meta.env.VITE_API_URL ?? (import.meta.env.DEV ? 'http://localhost:4000' : '')
 
 export class ApiError extends Error {
   status: number

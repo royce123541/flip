@@ -62,33 +62,33 @@ analyticsRouter.get('/', async (req: AuthedRequest, res) => {
     ]),
   ])
 
+  const dayOf = (field: string) => ({ $dateToString: { format: '%Y-%m-%d', date: field, timezone: timeZone } })
+
+  // Daily activity feeds the streak, which every plan sees, and the Pro activity chart.
+  const activityRows = await ReviewLog.aggregate<{ _id: string; count: number }>([
+    { $match: { ownerUid: uid, at: { $gte: new Date(now.getTime() - STREAK_LOOKBACK_DAYS * DAY_MS) } } },
+    { $group: { _id: dayOf('$at'), count: { $sum: 1 } } },
+  ])
+  const today = dayKey(now, timeZone)
+  const perDay = new Map(activityRows.map((r) => [r._id, r.count]))
+
   const cards = decks.flatMap((d) => d.cards)
   const basic = {
     totalCards: cards.length,
     dueCards: cards.filter((c) => c.due.getTime() <= now.getTime()).length,
     quizzesTaken: overall[0]?.count ?? 0,
     accuracy: overall[0]?.total ? overall[0].score / overall[0].total : null,
+    streak: computeStreaks(new Set(perDay.keys()), today),
   }
 
-  // The paywall is enforced here, not just in the UI: free users never receive Pro data.
+  // The paywall is enforced here, not just in the UI: free users never receive the Pro charts.
   if (user?.plan !== 'pro') return res.json({ full: false, ...basic })
 
-  const dayOf = (field: string) => ({ $dateToString: { format: '%Y-%m-%d', date: field, timezone: timeZone } })
-
-  const [trendRows, activityRows] = await Promise.all([
-    QuizAttempt.aggregate<{ _id: string; score: number; total: number }>([
-      { $match: { ownerUid: uid, createdAt: { $gte: new Date(now.getTime() - TREND_DAYS * DAY_MS) } } },
-      { $group: { _id: dayOf('$createdAt'), score: { $sum: '$score' }, total: { $sum: '$total' } } },
-      { $sort: { _id: 1 } },
-    ]),
-    ReviewLog.aggregate<{ _id: string; count: number }>([
-      { $match: { ownerUid: uid, at: { $gte: new Date(now.getTime() - STREAK_LOOKBACK_DAYS * DAY_MS) } } },
-      { $group: { _id: dayOf('$at'), count: { $sum: 1 } } },
-    ]),
+  const trendRows = await QuizAttempt.aggregate<{ _id: string; score: number; total: number }>([
+    { $match: { ownerUid: uid, createdAt: { $gte: new Date(now.getTime() - TREND_DAYS * DAY_MS) } } },
+    { $group: { _id: dayOf('$createdAt'), score: { $sum: '$score' }, total: { $sum: '$total' } } },
+    { $sort: { _id: 1 } },
   ])
-
-  const today = dayKey(now, timeZone)
-  const perDay = new Map(activityRows.map((r) => [r._id, r.count]))
 
   const mastery = decks.map((d) => {
     const mastered = d.cards.filter((c) => c.interval >= MASTERED_INTERVAL_DAYS).length
@@ -106,7 +106,6 @@ analyticsRouter.get('/', async (req: AuthedRequest, res) => {
   res.json({
     full: true,
     ...basic,
-    streak: computeStreaks(new Set(perDay.keys()), today),
     accuracyTrend: trendRows.map((r) => ({ date: r._id, accuracy: r.total ? r.score / r.total : 0, questions: r.total })),
     reviewsPerDay: Array.from({ length: ACTIVITY_DAYS }, (_, i) => {
       const date = shiftDay(today, i - (ACTIVITY_DAYS - 1))

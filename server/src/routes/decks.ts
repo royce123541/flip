@@ -123,6 +123,28 @@ decksRouter.delete('/:id', async (req, res) => {
   res.status(204).end()
 })
 
+const cardTextInput = z.object({
+  front: z.string().trim().min(1).max(1000),
+  back: z.string().trim().min(1).max(1000),
+})
+
+/** Edits one card's text (e.g. fixing a typo mid-study). Its schedule and wrong answers are kept. */
+decksRouter.patch('/:id/cards/:cardId', async (req, res) => {
+  const data = parse(cardTextInput, req.body, res)
+  if (!data) return
+  const deck = await findOwned(req, res)
+  if (!deck) return
+  const card = deck.cards.find((c) => c._id.toString() === String(req.params.cardId))
+  if (!card) return res.status(404).json({ error: 'Card not found' })
+
+  card.front = data.front
+  card.back = data.back
+  // A wrong answer that now equals the correct answer would make the quiz unfair.
+  card.distractors = card.distractors.filter((d) => d !== data.back)
+  await deck.save()
+  res.json({ id: card._id.toString(), front: card.front, back: card.back })
+})
+
 decksRouter.post('/:id/duplicate', async (req: AuthedRequest, res) => {
   const deck = await findOwned(req, res)
   if (!deck) return

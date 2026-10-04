@@ -1,0 +1,47 @@
+# Render Blueprint: one web service that serves both the API and the built React app.
+# Values marked `sync: false` are secrets you enter in the Render dashboard on first deploy.
+# The Firebase service-account key is added separately as a Secret File (see README > Deploy).
+services:
+  - type: web
+    name: flip
+    runtime: node
+    plan: free
+    buildCommand: cd client && npm ci && npm run build && cd ../server && npm ci && npm run build
+    startCommand: cd server && npm start
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+
+      # Server
+      - key: CLIENT_ORIGIN
+        sync: false # your Render URL, e.g. https://flip-xxxx.onrender.com (used for Stripe redirects)
+      - key: MONGODB_URI
+        sync: false
+      - key: FIREBASE_SERVICE_ACCOUNT_PATH
+        value: /etc/secrets/firebase-service-account.json
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: GEMINI_MODEL
+        value: gemini-3.5-flash-lite
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_PRO_PRICE_ID
+        sync: false
+      - key: FREE_MONTHLY_AI_LIMIT
+        value: "5"
+
+      # Client (read at build time by Vite; these Firebase web values are public by design)
+      - key: VITE_FIREBASE_API_KEY
+        sync: false
+      - key: VITE_FIREBASE_AUTH_DOMAIN
+        sync: false
+      - key: VITE_FIREBASE_PROJECT_ID
+        sync: false
+      - key: VITE_FIREBASE_APP_ID
+        sync: false
+      - key: VITE_PRO_PRICE_LABEL
+        value: ₱149/month

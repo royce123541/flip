@@ -2,6 +2,8 @@ import { BarChart3, Flame, Layers, Lock, Target, Trophy } from '@/components/pix
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Sprite } from '@/components/pixel/Sprite'
+import { emptyBox } from '@/components/pixel/sprites'
 import { EmptyState } from '@/components/flip/EmptyState'
 import { StatTile } from '@/components/flip/StatTile'
 import { ChartCard } from '@/components/flip/charts/ChartCard'
@@ -36,12 +38,8 @@ export default function Analytics() {
         <StatTile label="Total cards" value={data.totalCards} icon={<Layers className="size-5" />} />
         <StatTile label="Quizzes taken" value={data.quizzesTaken} icon={<BarChart3 className="size-5" />} />
         <StatTile label="Quiz accuracy" value={pct(data.accuracy)} icon={<Target className="size-5" />} />
-        {data.full && (
-          <>
-            <StatTile label="Current streak" value={`${data.streak.current} day${data.streak.current === 1 ? '' : 's'}`} icon={<Flame className="size-5" />} />
-            <StatTile label="Longest streak" value={`${data.streak.longest} day${data.streak.longest === 1 ? '' : 's'}`} icon={<Trophy className="size-5" />} />
-          </>
-        )}
+        <StatTile label="Current streak" value={`${data.streak.current} day${data.streak.current === 1 ? '' : 's'}`} icon={<Flame className="size-5" />} />
+        <StatTile label="Longest streak" value={`${data.streak.longest} day${data.streak.longest === 1 ? '' : 's'}`} icon={<Trophy className="size-5" />} />
       </div>
 
       {data.full ? <FullCharts data={data} /> : <Locked />}
@@ -55,7 +53,7 @@ function Locked() {
       <Lock className="mx-auto size-8 text-muted-foreground" aria-hidden />
       <h2 className="text-lg font-semibold">Full analytics is a Pro feature</h2>
       <p className="mx-auto max-w-md text-sm text-muted-foreground">
-        See your accuracy trend, daily study activity, streaks, and how well you know each deck.
+        See your accuracy trend, daily study activity, and how well you know each deck.
       </p>
       <Button render={<Link to="/pricing" />} nativeButton={false}>See Pro</Button>
     </div>
@@ -76,7 +74,7 @@ function FullCharts({ data }: { data: FullAnalytics }) {
         }}
       >
         {data.accuracyTrend.length === 0 ? (
-          <EmptyState title="No quizzes yet" description="Take a quiz and your accuracy trend will show up here." />
+          <EmptyState icon={<Sprite grid={emptyBox} className="size-16" />} title="No quizzes yet" description="Take a quiz and your accuracy trend will show up here." />
         ) : (
           <LineChart
             label="Quiz accuracy over the last 30 days"
@@ -91,7 +89,7 @@ function FullCharts({ data }: { data: FullAnalytics }) {
         table={{ columns: ['Date', 'Cards reviewed'], rows: data.reviewsPerDay.map((d) => [formatDay(d.date), d.count]) }}
       >
         {totalReviews === 0 ? (
-          <EmptyState title="No reviews in the last 14 days" description="Study a deck or take a quiz to start your streak." />
+          <EmptyState icon={<Sprite grid={emptyBox} className="size-16" />} title="No reviews in the last 14 days" description="Study a deck or take a quiz to start your streak." />
         ) : (
           <ColumnChart label="Cards reviewed per day, last 14 days" unit="cards" columns={data.reviewsPerDay.map((d) => ({ date: d.date, value: d.count }))} />
         )}
@@ -106,7 +104,7 @@ function FullCharts({ data }: { data: FullAnalytics }) {
         }}
       >
         {data.mastery.length === 0 ? (
-          <EmptyState title="No decks yet" description="Create a deck to track your progress." />
+          <EmptyState icon={<Sprite grid={emptyBox} className="size-16" />} title="No decks yet" description="Create a deck to track your progress." />
         ) : (
           <MasteryBars rows={data.mastery} />
         )}

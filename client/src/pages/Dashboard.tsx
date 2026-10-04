@@ -1,16 +1,20 @@
-import { GraduationCap, Layers, Plus, Search, Sparkles } from '@/components/pixel/icons'
+import { Plus, Search, Sparkles } from '@/components/pixel/icons'
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Sprite } from '@/components/pixel/Sprite'
+import { emptyBox, magnifier } from '@/components/pixel/sprites'
 import { DeckCard } from '@/components/flip/DeckCard'
 import { EmptyState } from '@/components/flip/EmptyState'
-import { StatTile } from '@/components/flip/StatTile'
+import { TodayPanel } from '@/components/flip/TodayPanel'
+import { useAnalytics } from '@/hooks/useAnalytics'
 import { useDecks } from '@/hooks/useDecks'
 
 export default function Dashboard() {
   const { data: decks, isLoading, error } = useDecks()
+  const { data: analytics } = useAnalytics()
   const [q, setQ] = useState('')
   const navigate = useNavigate()
 
@@ -20,14 +24,14 @@ export default function Dashboard() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between gap-4">
+      {isLoading && <Skeleton className="h-40" />}
+      {decks && decks.length > 0 && (
+        <TodayPanel due={totalDue} decks={decks.length} cards={totalCards} streak={analytics?.streak.current} />
+      )}
+
+      <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-2xl font-bold">Your decks</h1>
-        <div className="flex gap-2">
-          {totalDue > 0 && (
-            <Button variant="secondary" render={<Link to="/review" />} nativeButton={false}>
-              <GraduationCap /> Review {totalDue} due
-            </Button>
-          )}
+        <div className="flex flex-wrap gap-2">
           <Button variant="outline" render={<Link to="/generate" />} nativeButton={false}>
             <Sparkles /> Generate with AI
           </Button>
@@ -35,12 +39,6 @@ export default function Dashboard() {
             <Plus /> New deck
           </Button>
         </div>
-      </div>
-
-      <div className="grid gap-4 sm:grid-cols-3">
-        <StatTile label="Decks" value={decks?.length ?? '–'} icon={<Layers className="size-5" />} />
-        <StatTile label="Total cards" value={decks ? totalCards : '–'} icon={<Layers className="size-5" />} />
-        <StatTile label="Cards due" value={decks ? totalDue : '–'} icon={<Layers className="size-5" />} />
       </div>
 
       {error && <p role="alert" className="text-destructive">Could not load decks: {error.message}</p>}
@@ -53,11 +51,11 @@ export default function Dashboard() {
 
       {decks && decks.length === 0 && (
         <EmptyState
-          icon={<Layers className="size-8" />}
+          icon={<Sprite grid={emptyBox} className="size-24" />}
           title="No decks yet"
           description="Create a deck by hand, or let AI build one from your notes."
           action={
-            <div className="flex gap-2">
+            <div className="flex flex-wrap justify-center gap-2">
               <Button render={<Link to="/generate" />} nativeButton={false}><Sparkles /> Generate with AI</Button>
               <Button variant="outline" render={<Link to="/decks/new" />} nativeButton={false}>Create manually</Button>
             </div>
@@ -72,7 +70,12 @@ export default function Dashboard() {
             <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search decks" aria-label="Search decks" className="pl-9" />
           </div>
           {filtered.length === 0 ? (
-            <p className="text-muted-foreground">No decks match "{q}".</p>
+            <EmptyState
+              icon={<Sprite grid={magnifier} className="size-20" />}
+              title={`No decks match "${q}"`}
+              description="Check the spelling, or search for a shorter part of the deck's title."
+              action={<Button variant="outline" onClick={() => setQ('')}>Clear search</Button>}
+            />
           ) : (
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               {filtered.map((d) => (

@@ -122,6 +122,67 @@ cd server && npm run typecheck
 cd client && npx tsc -b && npm run build
 ```
 
+## Deploy to Render
+
+In production a single Render web service runs the Express server, which also serves the built React app.
+One URL, no CORS setup. `render.yaml` in the repo root describes the service.
+
+**Free tier note:** the free plan sleeps after 15 minutes without traffic, and the next visit takes about 30-50 seconds
+to wake it. Open the site a minute before a demo. Stripe retries webhooks, so a sleeping server does not lose payments.
+
+### 1. Put the code on GitHub
+Create an empty GitHub repository, then from the project root:
+```bash
+git remote add origin https://github.com/<you>/flip.git
+git push -u origin main
+```
+`.env` files and the Firebase key file are git-ignored; they never leave your machine.
+
+### 2. Create the service from the blueprint
+1. In the [Render dashboard](https://dashboard.render.com), choose **New > Blueprint** and pick your repository.
+   Render reads `render.yaml` and creates a web service called `flip`.
+2. It asks for every value marked as secret. Copy them from your local `server/.env` and `client/.env`:
+   `MONGODB_URI`, `GEMINI_API_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_PRO_PRICE_ID`, and the four `VITE_FIREBASE_*` values.
+   For now, put any placeholder in `STRIPE_WEBHOOK_SECRET` and `CLIENT_ORIGIN`; you set them properly in step 4.
+   Do **not** add `VITE_API_URL`; in production the app calls its own server.
+3. Add the Firebase key: open the service, then **Environment > Secret Files > Add Secret File**. Name it
+   `firebase-service-account.json` and paste the contents of `server/firebase-service-account.json`.
+   (The blueprint already points `FIREBASE_SERVICE_ACCOUNT_PATH` at `/etc/secrets/firebase-service-account.json`.)
+4. Deploy. When it finishes, copy your URL (e.g. `https://flip-ab12.onrender.com`).
+
+### 3. Let the services know about your new URL
+- **MongoDB Atlas > Network Access:** add `0.0.0.0/0`. Render's outgoing IP addresses change, so a fixed allowlist does not work.
+  Use a strong database password.
+- **Firebase > Authentication > Settings > Authorized domains:** add your Render domain (without `https://`).
+  Without this, Google sign-in fails on the live site.
+- **Stripe (test mode) > Developers > Webhooks > Add endpoint:**
+  URL `https://<your-domain>/api/billing/webhook`, with these events: `checkout.session.completed`,
+  `customer.subscription.created`, `customer.subscription.updated`, `customer.subscription.deleted`,
+  `invoice.paid`, `invoice.payment_failed`. Then reveal the endpoint's **signing secret** (`whsec_...`).
+  This is a different secret from the one `stripe listen` prints locally.
+
+### 4. Finish the configuration
+In Render, under **Environment**, set:
+- `CLIENT_ORIGIN` to your full URL, e.g. `https://flip-ab12.onrender.com` (Stripe uses it to send users back after checkout)
+- `STRIPE_WEBHOOK_SECRET` to the endpoint's signing secret from step 3
+
+Save; Render redeploys automatically. Every later `git push` to `main` also redeploys.
+
+### 5. Check the live site
+1. `https://<your-domain>/api/health` returns `{"ok":true}`.
+2. Sign up with email, and separately try **Continue with Google**.
+3. Create a deck, study it, take a quiz, and generate cards with AI.
+4. Upgrade with the test card `4242 4242 4242 4242`. In Stripe > Webhooks, the endpoint's deliveries should show `200`.
+5. Refresh on a deep page such as `/decks/...`; it should load, not 404.
+
+**Stay in Stripe test mode** unless you intend to take real payments. Live mode requires Stripe to verify you
+as a business, plus live keys, a live price, and a separate live webhook endpoint.
+
+### Production safeguards already in place
+Security headers (helmet, with a content security policy that allows Firebase and Google sign-in), per-IP rate limits
+(600 API requests per 15 minutes, and 30 AI generations per hour on top of the monthly quota), year-long caching for
+built assets, and the developer-only `/gallery` page is excluded from production builds.
+
 ## Troubleshooting
 
 | Symptom | Fix |
@@ -138,6 +199,11 @@ cd client && npx tsc -b && npm run build
 | Listener shows `[400] Invalid signature` | `STRIPE_WEBHOOK_SECRET` does not match the `whsec_...` the listener printed, or the server was not restarted after editing `.env`. |
 | Listener shows "connection refused" | The server is not running on port 4000. Start it before `stripe listen`. |
 | `winget install` cannot find the Stripe CLI | Use the zip download from Stripe step 4 instead. |
+| Live site: Google sign-in fails or closes immediately | Add the Render domain to Firebase > Authentication > Settings > Authorized domains. |
+| Live site: "Could not connect to MongoDB" in Render logs | Allow `0.0.0.0/0` in Atlas > Network Access. |
+| Live site: upgrade works but plan stays Free | Check Stripe > Webhooks > your endpoint's deliveries, and that `STRIPE_WEBHOOK_SECRET` is that endpoint's secret (not the `stripe listen` one). |
+| Live site takes ~40 s to load | Render's free plan was asleep. Later requests are fast. |
+| Local `npm ci` fails with `EPERM ... unlink` on Windows | A running dev server is holding files in `node_modules`. Stop `npm run dev` first, or use `npm install`. |
 | PDF says "scanned" | Only text-based PDFs are supported (no OCR). |
 
 ## Known limits

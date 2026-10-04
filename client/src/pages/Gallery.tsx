@@ -19,6 +19,12 @@ import { FlashCard } from '@/components/flip/FlashCard'
 import { PlanCard } from '@/components/flip/PlanCard'
 import { QuizQuestion } from '@/components/flip/QuizQuestion'
 import { StatTile } from '@/components/flip/StatTile'
+import { CoinCounter } from '@/components/flip/CoinCounter'
+import { GenerateProgress } from '@/components/flip/GenerateProgress'
+import { Stars } from '@/components/flip/Stars'
+import { TodayPanel } from '@/components/flip/TodayPanel'
+import { Sprite } from '@/components/pixel/Sprite'
+import { coin, emptyBox, finishedPile, magnifier, sleepingCard, star } from '@/components/pixel/sprites'
 import { ChartCard } from '@/components/flip/charts/ChartCard'
 import { ColumnChart } from '@/components/flip/charts/ColumnChart'
 import { LineChart } from '@/components/flip/charts/LineChart'
@@ -53,6 +59,8 @@ export default function Gallery() {
   const { resolvedTheme, setTheme } = useTheme()
   const [picked, setPicked] = useState<number>()
   const [revealed, setRevealed] = useState(false)
+  const [coins, setCoins] = useState(12)
+  const [starsKey, setStarsKey] = useState(0)
 
   return (
     <main className="mx-auto max-w-4xl space-y-8 px-4 py-8">
@@ -158,6 +166,30 @@ export default function Gallery() {
             <MasteryBars rows={sampleMastery} />
           </ChartCard>
         </div>
+      </Section>
+
+      <Section title="Game feel">
+        <div className="flex flex-wrap items-end gap-6">
+          {[emptyBox, sleepingCard, finishedPile, magnifier].map((g, i) => (
+            <Sprite key={i} grid={g} className="size-20" />
+          ))}
+          <Sprite grid={coin} className="size-10" />
+          <Sprite grid={star} className="size-10" />
+        </div>
+        <div className="flex flex-wrap items-center gap-8">
+          {[1, 2, 3].map((n) => (
+            <Stars key={`${starsKey}-${n}`} earned={n} />
+          ))}
+          <Button variant="outline" onClick={() => setStarsKey((k) => k + 1)}>Replay stars</Button>
+        </div>
+        <div className="flex items-center gap-4">
+          <CoinCounter coins={coins} />
+          <Button variant="outline" onClick={() => setCoins((c) => c + 1)}>Good (+1)</Button>
+          <Button variant="outline" onClick={() => setCoins((c) => c + 2)}>Easy (+2)</Button>
+        </div>
+        <TodayPanel due={14} decks={3} cards={120} streak={6} />
+        <TodayPanel due={0} decks={3} cards={120} streak={0} />
+        <GenerateProgress source="pdf" />
       </Section>
 
       <Section title="Upload & empty state">
