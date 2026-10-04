@@ -1,4 +1,4 @@
-import { GraduationCap, Layers, Plus, Search, Sparkles } from 'lucide-react'
+import { GraduationCap, Layers, Plus, Search, Sparkles } from '@/components/pixel/icons'
 import { useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
@@ -47,7 +47,7 @@ export default function Dashboard() {
 
       {isLoading && (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {[0, 1, 2].map((i) => <Skeleton key={i} className="h-32 rounded-xl" />)}
+          {[0, 1, 2].map((i) => <Skeleton key={i} className="h-32" />)}
         </div>
       )}
 

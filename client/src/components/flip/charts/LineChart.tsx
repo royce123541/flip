@@ -13,7 +13,7 @@ const M = { top: 20, right: 28, bottom: 28, left: 44 }
 const TICKS = [0, 0.25, 0.5, 0.75, 1]
 const pct = (v: number) => `${Math.round(v * 100)}%`
 
-/** Single-series percentage line over time. Marks follow the dataviz spec: 2px line, 8px dots with a surface ring, hairline grid. */
+/** Single-series percentage line over time. Marks follow the dataviz spec: 3px stepped line, square pixel markers, hairline grid. */
 export function LineChart({ points, label }: { points: LinePoint[]; label: string }) {
   const [active, setActive] = useState<number | null>(null)
   const svgRef = useRef<SVGSVGElement>(null)
@@ -27,7 +27,10 @@ export function LineChart({ points, label }: { points: LinePoint[]; label: strin
   const x = (i: number) => M.left + (t1 === t0 ? innerW / 2 : ((times[i] - t0) / (t1 - t0)) * innerW)
   const y = (v: number) => M.top + (1 - v) * innerH
 
-  const path = points.map((p, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(p.value).toFixed(1)}`).join(' ')
+  // Stepped line (hold, then jump) so the trend reads on the pixel grid.
+  const path = points
+    .map((p, i) => (i ? `H${x(i).toFixed(0)} V${y(p.value).toFixed(0)}` : `M${x(0).toFixed(0)},${y(p.value).toFixed(0)}`))
+    .join(' ')
 
   const nearest = (e: PointerEvent<SVGSVGElement>) => {
     const rect = svgRef.current!.getBoundingClientRect()
@@ -69,40 +72,41 @@ export function LineChart({ points, label }: { points: LinePoint[]; label: strin
       >
         {TICKS.map((t) => (
           <g key={t}>
-            <line x1={M.left} x2={W - M.right} y1={y(t)} y2={y(t)} stroke="var(--border)" strokeWidth={1} />
-            <text x={M.left - 8} y={y(t)} textAnchor="end" dominantBaseline="middle" fontSize={11} fill="var(--muted-foreground)">
+            <line x1={M.left} x2={W - M.right} y1={y(t)} y2={y(t)} stroke="var(--outline)" strokeOpacity={0.35} strokeWidth={2} strokeDasharray="3 3" />
+            <text x={M.left - 8} y={y(t)} textAnchor="end" dominantBaseline="middle" fontSize={12} fontFamily="var(--font-sans)" fontWeight={700} fill="var(--muted-foreground)">
               {pct(t)}
             </text>
           </g>
         ))}
 
-        <text x={x(0)} y={H - 8} textAnchor={points.length > 1 ? 'start' : 'middle'} fontSize={11} fill="var(--muted-foreground)">
+        <text x={x(0)} y={H - 8} textAnchor={points.length > 1 ? 'start' : 'middle'} fontSize={12} fontFamily="var(--font-sans)" fontWeight={700} fill="var(--muted-foreground)">
           {formatDay(points[0].date)}
         </text>
         {points.length > 1 && (
-          <text x={x(last)} y={H - 8} textAnchor="end" fontSize={11} fill="var(--muted-foreground)">
+          <text x={x(last)} y={H - 8} textAnchor="end" fontSize={12} fontFamily="var(--font-sans)" fontWeight={700} fill="var(--muted-foreground)">
             {formatDay(points[last].date)}
           </text>
         )}
 
-        {active !== null && <line x1={x(active)} x2={x(active)} y1={M.top} y2={M.top + innerH} stroke="var(--muted-foreground)" strokeWidth={1} />}
+        {active !== null && <line x1={x(active)} x2={x(active)} y1={M.top} y2={M.top + innerH} stroke="var(--outline)" strokeWidth={2} strokeDasharray="4 4" />}
 
-        {points.length > 1 && <path d={path} fill="none" stroke="var(--primary)" strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />}
+        {points.length > 1 && <path d={path} fill="none" stroke="var(--foreground)" strokeWidth={3} strokeLinejoin="miter" strokeLinecap="square" />}
 
         {points.map((p, i) => (
-          <circle
+          <rect
             key={p.date}
-            cx={x(i)}
-            cy={y(p.value)}
-            r={active === i ? 5 : 4}
+            x={x(i) - (active === i ? 7 : 5)}
+            y={y(p.value) - (active === i ? 7 : 5)}
+            width={active === i ? 14 : 10}
+            height={active === i ? 14 : 10}
             fill="var(--primary)"
-            stroke="var(--card)"
+            stroke="var(--foreground)"
             strokeWidth={2}
           />
         ))}
 
         {/* Label only the endpoint; the tooltip and table carry the rest. */}
-        <text x={x(last)} y={y(points[last].value) - 12} textAnchor="middle" fontSize={12} fontWeight={600} fill="var(--foreground)">
+        <text x={x(last)} y={y(points[last].value) - 12} textAnchor="middle" fontSize={14} fontWeight={700} fontFamily="var(--font-sans)" fill="var(--foreground)">
           {pct(points[last].value)}
         </text>
       </svg>
@@ -110,11 +114,11 @@ export function LineChart({ points, label }: { points: LinePoint[]; label: strin
       {shown && active !== null && (
         <div
           role="status"
-          className="pointer-events-none absolute top-0 z-10 -translate-x-1/2 whitespace-nowrap rounded-lg border bg-popover px-3 py-2 text-sm shadow-md"
+          className="pointer-events-none absolute top-0 z-10 -translate-x-1/2 whitespace-nowrap border-3 border-outline bg-popover px-3 py-2 text-sm shadow-sm"
           style={{ left: `${Math.min(88, Math.max(12, (x(active) / W) * 100))}%` }}
         >
           <div className="flex items-center gap-2">
-            <span className="inline-block h-0.5 w-3 rounded bg-primary" aria-hidden />
+            <span className="inline-block size-3 border-2 border-outline bg-primary" aria-hidden />
             <span className="font-semibold tabular-nums">{pct(shown.value)}</span>
           </div>
           <p className="text-xs text-muted-foreground">

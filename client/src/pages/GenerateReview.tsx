@@ -69,7 +69,7 @@ function Review({ cards, truncated }: { cards: Card[]; truncated: boolean }) {
       </div>
 
       {truncated && (
-        <p role="status" className="rounded-lg border bg-muted p-3 text-sm">
+        <p role="status" className="border-3 border-outline bg-card p-3 text-sm shadow-sm">
           Your document was longer than the limit, so only the first part was used.
         </p>
       )}
@@ -93,7 +93,7 @@ function Review({ cards, truncated }: { cards: Card[]; truncated: boolean }) {
         ))}
       </div>
 
-      <div className="sticky bottom-0 flex items-center gap-2 border-t bg-background/90 py-3 backdrop-blur">
+      <div className="sticky bottom-0 flex items-center gap-2 border-t-3 border-outline bg-background py-3">
         <Button onClick={save} disabled={create.isPending}>
           {create.isPending ? 'Saving…' : `Save ${selected.length} card${selected.length === 1 ? '' : 's'}`}
         </Button>

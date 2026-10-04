@@ -9,21 +9,21 @@ export interface MasteryRow {
   notLearned: number
 }
 
-// One hue, light -> dark = further along. Order of this array is the stack order.
+// Further along = stronger fill. Each segment is outlined in ink, so states never rely on colour alone. Order = stack order.
 const SEGMENTS = [
   { key: 'mastered', label: 'Mastered', swatch: 'bg-primary' },
-  { key: 'learning', label: 'Learning', swatch: 'bg-primary/55' },
-  { key: 'notLearned', label: 'Not learned yet', swatch: 'bg-primary/20' },
+  { key: 'learning', label: 'Learning', swatch: 'bg-chart-2' },
+  { key: 'notLearned', label: 'Not learned yet', swatch: 'bg-background' },
 ] as const
 
-/** Stacked horizontal bars of card progress per deck. Segments are separated by a 2px gap, never a border. */
+/** Stacked horizontal bars of card progress per deck, as outlined pixel segments with a 3px gap. */
 export function MasteryBars({ rows }: { rows: MasteryRow[] }) {
   return (
     <div className="space-y-4">
       <ul className="flex flex-wrap gap-x-5 gap-y-1 text-sm" aria-label="Legend">
         {SEGMENTS.map((s) => (
           <li key={s.key} className="flex items-center gap-2">
-            <span className={`inline-block size-3 rounded-[3px] ${s.swatch}`} aria-hidden />
+            <span className={`inline-block size-4 border-2 border-outline ${s.swatch}`} aria-hidden />
             <span className="text-muted-foreground">{s.label}</span>
           </li>
         ))}
@@ -43,7 +43,7 @@ export function MasteryBars({ rows }: { rows: MasteryRow[] }) {
               {row.total === 0 ? (
                 <p className="text-sm text-muted-foreground">No cards yet.</p>
               ) : (
-                <div className="flex h-3 gap-0.5">
+                <div className="flex h-5 gap-[3px]">
                   {SEGMENTS.filter((s) => row[s.key] > 0).map((s) => (
                     <Tooltip key={s.key}>
                       <TooltipTrigger
@@ -52,7 +52,7 @@ export function MasteryBars({ rows }: { rows: MasteryRow[] }) {
                             tabIndex={0}
                             role="img"
                             aria-label={`${row.title}: ${row[s.key]} ${s.label.toLowerCase()}`}
-                            className={`rounded-[4px] outline-none focus-visible:ring-2 focus-visible:ring-ring ${s.swatch}`}
+                            className={`border-2 border-outline ${s.swatch}`}
                             style={{ flexGrow: row[s.key], flexBasis: 0 }}
                           />
                         }

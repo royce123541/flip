@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Flame, Layers, Moon, Sun, Target } from 'lucide-react'
+import { Flame, Layers, Moon, Sun, Target } from '@/components/pixel/icons'
 import { useTheme } from 'next-themes'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
@@ -138,7 +138,7 @@ export default function Gallery() {
         </div>
         <div className="grid gap-4 sm:grid-cols-2">
           <DeckCard title="Biology 101" description="Cell structure and metabolism" cardCount={42} dueCount={8} onClick={() => toast('Open deck')} />
-          <Skeleton className="h-32 rounded-xl" />
+          <Skeleton className="h-32" />
         </div>
       </Section>
 

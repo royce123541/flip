@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react'
-import { FileUp } from 'lucide-react'
+import { FileUp } from '@/components/pixel/icons'
 import { cn } from '@/lib/utils'
 
 interface FileDropzoneProps {
@@ -36,8 +36,8 @@ export function FileDropzone({ maxSizeMB = 10, onFile, onError }: FileDropzonePr
         handle(e.dataTransfer.files[0])
       }}
       className={cn(
-        'flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed p-10 text-center transition-colors focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none',
-        dragging ? 'border-primary bg-primary/5' : 'hover:bg-accent',
+        'flex cursor-pointer flex-col items-center gap-2 border-3 border-dashed border-outline bg-card p-10 text-center transition-colors',
+        dragging ? 'border-solid bg-primary text-primary-foreground' : 'hover:bg-accent',
       )}
     >
       <FileUp className="size-8 text-muted-foreground" aria-hidden />

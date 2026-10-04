@@ -1,4 +1,5 @@
-import { AlertTriangle, Layers, LogOut, Menu, Plus, User } from 'lucide-react'
+import { AlertTriangle, LogOut, Menu, Plus, User } from '@/components/pixel/icons'
+import { PixelLogo } from '@/components/pixel/Logo'
 import { signOut } from 'firebase/auth'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
@@ -19,7 +20,7 @@ const memberLinks = [
 const pricingLink = { to: '/pricing', label: 'Pricing' }
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
-  cn('text-sm font-medium transition-colors hover:text-primary', isActive ? 'text-primary' : 'text-muted-foreground')
+  cn('font-pixel text-base underline-offset-8 hover:underline hover:decoration-dashed hover:decoration-2', isActive ? 'font-semibold text-foreground underline decoration-3' : 'text-muted-foreground')
 
 /** Shell for signed-in pages and for public pages that share the nav (e.g. /pricing). */
 export default function AppLayout() {
@@ -30,10 +31,10 @@ export default function AppLayout() {
 
   return (
     <div className="min-h-screen">
-      <header className="sticky top-0 z-40 border-b bg-background/80 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b-3 border-outline bg-card">
         <div className="mx-auto flex h-14 max-w-5xl items-center gap-6 px-4">
-          <Link to={user ? '/dashboard' : '/pricing'} className="flex items-center gap-2 font-bold">
-            <Layers className="size-5 text-primary" aria-hidden /> Flip
+          <Link to={user ? '/dashboard' : '/pricing'} className="flex items-center gap-2 font-pixel text-xl font-bold">
+            <PixelLogo className="size-8" /> Flip
           </Link>
 
           <nav className="hidden items-center gap-6 md:flex" aria-label="Main">
@@ -52,9 +53,9 @@ export default function AppLayout() {
                 </Button>
 
                 <DropdownMenu>
-                  <DropdownMenuTrigger render={<Button variant="ghost" size="icon" className="rounded-full" aria-label="Account menu" />}>
+                  <DropdownMenuTrigger render={<Button variant="ghost" size="icon" aria-label="Account menu" />}>
                     <Avatar className="size-8">
-                      <AvatarFallback>{initial}</AvatarFallback>
+                      <AvatarFallback className="bg-primary font-pixel font-bold text-primary-foreground">{initial}</AvatarFallback>
                     </Avatar>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
@@ -98,9 +99,9 @@ export default function AppLayout() {
       </header>
 
       {me?.subscriptionStatus === 'past_due' && (
-        <div role="alert" className="border-b border-destructive/40 bg-destructive/10">
+        <div role="alert" className="border-b-3 border-outline bg-[#F4A3AA] text-[#1B2A4A]">
           <div className="mx-auto flex max-w-5xl items-center gap-2 px-4 py-2 text-sm">
-            <AlertTriangle className="size-4 shrink-0 text-destructive" aria-hidden />
+            <AlertTriangle className="size-5 shrink-0" aria-hidden />
             <span>Your last payment failed.</span>
             <Link to="/account" className="font-medium underline">Update payment method</Link>
           </div>

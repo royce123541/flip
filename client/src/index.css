@@ -1,13 +1,40 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
-@import "@fontsource-variable/inter";
+@import "@fontsource-variable/pixelify-sans";
+@import "@fontsource/atkinson-hyperlegible/400.css";
+@import "@fontsource/atkinson-hyperlegible/700.css";
+
+/*
+ * Pixelify's digits are ambiguous at UI sizes (5 reads as S, 2 as 8). This face covers only
+ * digits and %, so numbers inside pixel text render in bold Atkinson while letters stay pixel.
+ */
+@font-face {
+  font-family: 'Flip Digits';
+  src: url('../node_modules/@fontsource/atkinson-hyperlegible/files/atkinson-hyperlegible-latin-700-normal.woff2') format('woff2');
+  font-weight: 100 900;
+  unicode-range: U+0030-0039, U+0025;
+}
 
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-    --font-heading: var(--font-sans);
-    --font-sans: 'Inter Variable', sans-serif;
+    --font-heading: var(--font-pixel);
+    --font-sans: 'Atkinson Hyperlegible', system-ui, sans-serif;
+    --font-pixel: 'Flip Digits', 'Pixelify Sans Variable', 'Atkinson Hyperlegible', monospace;
+    --color-outline: var(--outline);
+    --color-success: var(--success);
+    --color-leaf: var(--leaf);
+    --color-cherry: var(--cherry);
+    --color-sky: var(--sky);
+    --shadow-2xs: 2px 2px 0 var(--shadow);
+    --shadow-xs: 2px 2px 0 var(--shadow);
+    --shadow-sm: 4px 4px 0 var(--shadow);
+    --shadow: 4px 4px 0 var(--shadow);
+    --shadow-md: 4px 4px 0 var(--shadow);
+    --shadow-lg: 6px 6px 0 var(--shadow);
+    --shadow-xl: 6px 6px 0 var(--shadow);
+    --shadow-2xl: 8px 8px 0 var(--shadow);
     --color-sidebar-ring: var(--sidebar-ring);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -48,83 +75,164 @@
     --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/*
+ * Flip pixel palette. Day: pastel-blue world, navy ink, coin-yellow actions.
+ * Contrast measured: ink/sky 8.1, ink/cloud 11.2, ink/coin 9.7, muted/sky 5.3,
+ * destructive text/sky 4.7, white/destructive 8+; night text/dusk 10.6, outline/dusk 5.0.
+ * Bright cherry and leaf are decorative fills only; text uses --destructive / --success.
+ */
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.511 0.262 276.966);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.585 0.233 277.117);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --radius: 0.75rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.708 0 0);
+    --sky: #A7C7E7;
+    --cloud: #D6E6F5;
+    --ink: #1B2A4A;
+    --coin: #FFCF4A;
+    --leaf: #4FAF5E;
+    --cherry: #E14B57;
+
+    --background: var(--sky);
+    --foreground: var(--ink);
+    --card: var(--cloud);
+    --card-foreground: var(--ink);
+    --popover: var(--cloud);
+    --popover-foreground: var(--ink);
+    --primary: var(--coin);
+    --primary-foreground: var(--ink);
+    --secondary: var(--cloud);
+    --secondary-foreground: var(--ink);
+    --muted: #C2D8EF;
+    --muted-foreground: #34476A;
+    --accent: #C2D8EF;
+    --accent-foreground: var(--ink);
+    --destructive: #962030;
+    --success: #23662F;
+    --border: var(--ink);
+    --input: var(--ink);
+    --outline: var(--ink);
+    --shadow: var(--ink);
+    --ring: var(--ink);
+    --chart-1: var(--coin);
+    --chart-2: var(--sky);
+    --chart-3: var(--cloud);
+    --chart-4: var(--ink);
+    --chart-5: var(--leaf);
+    --radius: 0rem;
+    --px: 3px;
+    --sidebar: var(--cloud);
+    --sidebar-foreground: var(--ink);
+    --sidebar-primary: var(--coin);
+    --sidebar-primary-foreground: var(--ink);
+    --sidebar-accent: #C2D8EF;
+    --sidebar-accent-foreground: var(--ink);
+    --sidebar-border: var(--ink);
+    --sidebar-ring: var(--ink);
 }
 
 .dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.205 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.205 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.673 0.182 276.935);
-    --primary-foreground: oklch(0.145 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.704 0.191 22.216);
-    --border: oklch(1 0 0 / 10%);
-    --input: oklch(1 0 0 / 15%);
-    --ring: oklch(0.585 0.233 277.117);
-    --chart-1: oklch(0.87 0 0);
-    --chart-2: oklch(0.556 0 0);
-    --chart-3: oklch(0.439 0 0);
-    --chart-4: oklch(0.371 0 0);
-    --chart-5: oklch(0.269 0 0);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.488 0.243 264.376);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(1 0 0 / 10%);
-    --sidebar-ring: oklch(0.556 0 0);
+    --background: #16213A;
+    --foreground: #E6EEF8;
+    --card: #23335A;
+    --card-foreground: #E6EEF8;
+    --popover: #23335A;
+    --popover-foreground: #E6EEF8;
+    --primary: var(--coin);
+    --primary-foreground: var(--ink);
+    --secondary: #23335A;
+    --secondary-foreground: #E6EEF8;
+    --muted: #2E416C;
+    --muted-foreground: #A9BAD3;
+    --accent: #2E416C;
+    --accent-foreground: #E6EEF8;
+    --destructive: #FF8A93;
+    --success: #7DD68B;
+    --border: #8FA6C9;
+    --input: #8FA6C9;
+    --outline: #8FA6C9;
+    --shadow: #0A1020;
+    --ring: #E6EEF8;
+    --chart-2: #4A6290;
+    --chart-3: #2E416C;
+    --chart-4: #E6EEF8;
+    --sidebar: #23335A;
+    --sidebar-foreground: #E6EEF8;
+    --sidebar-accent: #2E416C;
+    --sidebar-accent-foreground: #E6EEF8;
+    --sidebar-border: #8FA6C9;
+    --sidebar-ring: #E6EEF8;
 }
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
-    }
+    @apply border-border;
+  }
   body {
     @apply bg-background text-foreground;
-    }
+    -webkit-font-smoothing: none;
+  }
   html {
     @apply font-sans;
-    }
+  }
+  /* Pixel face for interface chrome; study text stays in the readable sans (opt in with font-sans). */
+  h1, h2, h3, h4, label, legend, th, nav,
+  [data-slot=button], [data-slot=badge], [data-slot=card-title], [data-slot=tabs-trigger],
+  [data-slot=dialog-title], [data-slot=alert-dialog-title], [data-slot=sheet-title],
+  [data-slot=dropdown-menu-item], [data-slot=dropdown-menu-label] {
+    font-family: var(--font-pixel);
+  }
+  svg { shape-rendering: crispEdges; }
+}
+
+/* Strict pixel rules: no rounded corners, no blur, no soft focus glow. */
+*, *::before, *::after {
+  border-radius: 0 !important;
+  backdrop-filter: none !important;
+}
+:focus-visible {
+  --tw-ring-color: transparent;
+  outline: 3px dashed var(--outline) !important;
+  outline-offset: 3px;
+}
+/* Motion moves in frames, not curves. */
+* {
+  transition-timing-function: steps(2, end) !important;
+  animation-timing-function: steps(4, end) !important;
+}
+.animate-spin { animation-timing-function: steps(8, end) !important; }
+
+@layer utilities {
+  /* A pixel panel: 3px outline plus a hard, offset drop shadow. */
+  .px-box {
+    border: var(--px) solid var(--outline);
+    box-shadow: 4px 4px 0 var(--shadow);
+  }
+  /* Physical key press: the element drops into its own shadow. */
+  .px-press:not(:disabled):active {
+    translate: 4px 4px;
+    box-shadow: 0 0 0 transparent;
+  }
+  /* Stepped corners: the corner pixel is cut away. Pair with .px-drop on a parent for the shadow. */
+  .px-notch {
+    clip-path: polygon(
+      0 6px, 3px 6px, 3px 3px, 6px 3px, 6px 0,
+      calc(100% - 6px) 0, calc(100% - 6px) 3px, calc(100% - 3px) 3px, calc(100% - 3px) 6px, 100% 6px,
+      100% calc(100% - 6px), calc(100% - 3px) calc(100% - 6px), calc(100% - 3px) calc(100% - 3px), calc(100% - 6px) calc(100% - 3px), calc(100% - 6px) 100%,
+      6px 100%, 6px calc(100% - 3px), 3px calc(100% - 3px), 3px calc(100% - 6px), 0 calc(100% - 6px)
+    );
+  }
+  .px-drop { filter: drop-shadow(4px 4px 0 var(--shadow)); }
+  .font-pixel { font-family: var(--font-pixel); }
+}
+
+/* Flashcard turn: full width, a sliver, full width again (two visible frames). */
+@keyframes px-squash {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(0.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0s !important;
+  }
+  .px-press:not(:disabled):active { translate: none; }
 }

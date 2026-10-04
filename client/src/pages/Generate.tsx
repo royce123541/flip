@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { FileText, Lock, Sparkles } from 'lucide-react'
+import { FileText, Lock, Sparkles } from '@/components/pixel/icons'
 import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
@@ -49,7 +49,7 @@ export default function Generate() {
     <div className="mx-auto max-w-2xl space-y-6">
       <div>
         <h1 className="flex items-center gap-2 text-2xl font-bold">
-          <Sparkles className="size-6 text-primary" aria-hidden /> Generate with AI
+          <Sparkles className="size-7" aria-hidden /> Generate with AI
         </h1>
         <p className="mt-1 text-muted-foreground">Turn your notes into flashcards and quiz questions. You can review everything before saving.</p>
       </div>
@@ -94,7 +94,7 @@ export default function Generate() {
               </Button>
             </>
           ) : (
-            <div className="space-y-2 rounded-2xl border border-dashed p-8 text-center">
+            <div className="space-y-2 border-3 border-dashed border-outline bg-card p-8 text-center">
               <Lock className="mx-auto size-8 text-muted-foreground" aria-hidden />
               <p className="font-medium">PDF upload is a Pro feature</p>
               <p className="text-sm text-muted-foreground">Upgrade to turn whole PDFs into decks. Pasting text works on the free plan.</p>

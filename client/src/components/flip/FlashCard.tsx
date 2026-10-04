@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { cn } from '@/lib/utils'
 
 interface FlashCardProps {
@@ -10,42 +10,55 @@ interface FlashCardProps {
   onFlippedChange?: (flipped: boolean) => void
 }
 
+const FLIP_MS = 160
+const reducedMotion = () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+
+/**
+ * The signature element: a chunky pixel card with stepped corners and a hard shadow.
+ * Flipping plays a two-frame "squash" and swaps the face at the midpoint, like an 8-bit sprite turning.
+ */
 export function FlashCard({ front, back, className, flipped: controlled, onFlippedChange }: FlashCardProps) {
   const [internal, setInternal] = useState(false)
   const flipped = controlled ?? internal
+  const [shown, setShown] = useState(flipped)
+  const [turning, setTurning] = useState(false)
+
+  useEffect(() => {
+    if (flipped === shown) return
+    if (reducedMotion()) {
+      setShown(flipped)
+      return
+    }
+    setTurning(true)
+    const swap = setTimeout(() => setShown(flipped), FLIP_MS / 2)
+    const done = setTimeout(() => setTurning(false), FLIP_MS)
+    return () => {
+      clearTimeout(swap)
+      clearTimeout(done)
+    }
+  }, [flipped, shown])
+
   const toggle = () => (onFlippedChange ? onFlippedChange(!flipped) : setInternal(!flipped))
 
   return (
-    <button
-      type="button"
-      onClick={toggle}
-      aria-pressed={flipped}
-      aria-label={flipped ? `Answer: ${back}. Press to show question.` : `Question: ${front}. Press to show answer.`}
-      className={cn('group h-64 w-full max-w-xl [perspective:1000px] focus-visible:outline-none', className)}
-    >
-      <div
-        className={cn(
-          'relative h-full w-full rounded-2xl transition-transform duration-500 [transform-style:preserve-3d] group-focus-visible:ring-3 group-focus-visible:ring-ring/50',
-          flipped && '[transform:rotateY(180deg)]',
-        )}
+    <div className={cn('px-drop w-full max-w-xl', className)}>
+      <button
+        type="button"
+        onClick={toggle}
+        aria-pressed={flipped}
+        aria-label={flipped ? `Answer: ${back}. Press to show question.` : `Question: ${front}. Press to show answer.`}
+        className={cn('px-notch block h-64 w-full bg-outline p-[3px]', turning && 'animate-[px-squash_160ms_steps(2,end)]')}
       >
-        <Face label="Question" text={front} />
-        <Face label="Answer" text={back} back />
-      </div>
-    </button>
-  )
-}
-
-function Face({ label, text, back }: { label: string; text: string; back?: boolean }) {
-  return (
-    <div
-      className={cn(
-        'absolute inset-0 flex flex-col items-center justify-center gap-3 rounded-2xl border p-8 text-center shadow-sm [backface-visibility:hidden]',
-        back ? 'bg-primary text-primary-foreground [transform:rotateY(180deg)]' : 'bg-card text-card-foreground',
-      )}
-    >
-      <span className="text-xs font-medium uppercase tracking-wider opacity-60">{label}</span>
-      <p className="text-xl font-semibold leading-snug">{text}</p>
+        <div
+          className={cn(
+            'px-notch flex h-full flex-col items-center justify-center gap-4 p-8 text-center',
+            shown ? 'bg-primary text-primary-foreground' : 'bg-card text-card-foreground',
+          )}
+        >
+          <span className="font-pixel text-sm opacity-80">{shown ? 'Answer' : 'Question'}</span>
+          <p className="font-sans text-xl leading-snug font-bold">{shown ? back : front}</p>
+        </div>
+      </button>
     </div>
   )
 }

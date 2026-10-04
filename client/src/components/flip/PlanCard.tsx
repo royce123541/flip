@@ -1,4 +1,4 @@
-import { Check, Lock } from 'lucide-react'
+import { Check, Lock } from '@/components/pixel/icons'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,12 +16,12 @@ interface PlanCardProps {
 
 export function PlanCard({ name, price, description, features, highlighted, cta, onSelect, disabled }: PlanCardProps) {
   return (
-    <Card className={highlighted ? 'border-primary shadow-md' : undefined}>
-      <CardHeader>
+    <Card className={highlighted ? 'shadow-lg' : undefined}>
+      <CardHeader className={highlighted ? '-mt-(--card-spacing) border-b-3 border-outline bg-primary pt-(--card-spacing) pb-(--card-spacing) text-primary-foreground' : undefined}>
         <CardTitle className="flex items-center gap-2">
-          {name} {highlighted && <Badge>Popular</Badge>}
+          {name} {highlighted && <Badge variant="secondary">Popular</Badge>}
         </CardTitle>
-        <CardDescription>{description}</CardDescription>
+        <CardDescription className={highlighted ? 'text-primary-foreground' : undefined}>{description}</CardDescription>
         <p className="pt-2 text-3xl font-bold">{price}</p>
       </CardHeader>
       <CardContent>
@@ -29,9 +29,9 @@ export function PlanCard({ name, price, description, features, highlighted, cta,
           {features.map((f) => (
             <li key={f.text} className="flex items-center gap-2">
               {f.locked ? (
-                <Lock className="size-4 text-muted-foreground" aria-label="Not included" />
+                <Lock className="size-5 text-muted-foreground" aria-label="Not included" />
               ) : (
-                <Check className="size-4 text-primary" aria-label="Included" />
+                <Check className="size-5" aria-label="Included" />
               )}
               <span className={f.locked ? 'text-muted-foreground' : undefined}>{f.text}</span>
             </li>

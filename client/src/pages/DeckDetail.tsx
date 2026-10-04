@@ -1,4 +1,4 @@
-import { Copy, GraduationCap, ListChecks, Pencil, Trash2 } from 'lucide-react'
+import { Copy, GraduationCap, ListChecks, Pencil, Trash2 } from '@/components/pixel/icons'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog'

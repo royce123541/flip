@@ -1,4 +1,4 @@
-import { BookOpen } from 'lucide-react'
+import { BookOpen } from '@/components/pixel/icons'
 import { Badge } from '@/components/ui/badge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 
@@ -17,11 +17,11 @@ export function DeckCard({ title, description, cardCount, dueCount = 0, onClick 
       tabIndex={onClick ? 0 : undefined}
       onClick={onClick}
       onKeyDown={(e) => onClick && (e.key === 'Enter' || e.key === ' ') && onClick()}
-      className="cursor-pointer transition-shadow hover:shadow-md focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+      className="px-press cursor-pointer hover:bg-accent"
     >
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
-          <BookOpen className="size-4 text-primary" aria-hidden /> {title}
+          <BookOpen className="size-5" aria-hidden /> {title}
         </CardTitle>
         {description && <CardDescription className="line-clamp-2">{description}</CardDescription>}
       </CardHeader>

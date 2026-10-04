@@ -27,7 +27,7 @@ export function QuizQuestion({ index, total, question, options, selected, correc
       <p className="text-sm text-muted-foreground">
         Question {index} of {total}
       </p>
-      <h2 className="text-xl font-semibold">{question}</h2>
+      <h2 className="font-sans text-xl font-bold">{question}</h2>
       <div className="space-y-2" role="group" aria-label="Answer choices">
         {options.map((text, i) => (
           <AnswerOption

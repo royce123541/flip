@@ -1,4 +1,4 @@
-import { AlertTriangle } from 'lucide-react'
+import { AlertTriangle } from '@/components/pixel/icons'
 import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import { Badge } from '@/components/ui/badge'
@@ -29,11 +29,11 @@ export default function Account() {
       <h1 className="text-2xl font-bold">Account</h1>
 
       {me.subscriptionStatus === 'past_due' && (
-        <div role="alert" className="flex gap-3 rounded-xl border border-destructive/50 bg-destructive/10 p-4">
-          <AlertTriangle className="mt-0.5 size-5 shrink-0 text-destructive" aria-hidden />
+        <div role="alert" className="flex gap-3 border-3 border-outline bg-[#F4A3AA] p-4 text-[#1B2A4A] shadow-sm">
+          <AlertTriangle className="mt-0.5 size-6 shrink-0" aria-hidden />
           <div className="space-y-2">
             <p className="font-medium">Your last payment failed</p>
-            <p className="text-sm text-muted-foreground">Update your payment method to keep Pro. Stripe will retry automatically.</p>
+            <p className="text-sm">Update your payment method to keep Pro. Stripe will retry automatically.</p>
             <Button size="sm" onClick={manage} disabled={portal.isPending}>Update payment method</Button>
           </div>
         </div>
@@ -73,7 +73,7 @@ export default function Account() {
         </CardContent>
       </Card>
 
-      <Card className="border-destructive/40">
+      <Card className="border-dashed">
         <CardHeader>
           <CardTitle>Delete account</CardTitle>
           <CardDescription>Permanently remove your account and everything in it.</CardDescription>

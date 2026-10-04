@@ -1,4 +1,4 @@
-import { Check, X } from 'lucide-react'
+import { Check, X } from '@/components/pixel/icons'
 import { Link, useParams } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -18,7 +18,7 @@ export default function QuizResults() {
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div className="space-y-1 text-center">
-        <p className="text-5xl font-bold text-primary">{pct}%</p>
+        <p className="inline-block border-3 border-outline bg-primary px-6 py-2 text-5xl font-bold tabular-nums text-primary-foreground shadow-md">{pct}%</p>
         <p className="text-muted-foreground">{data.score} of {data.total} correct</p>
       </div>
 

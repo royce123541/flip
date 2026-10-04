@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { CheckCircle2 } from 'lucide-react'
+import { CheckCircle2 } from '@/components/pixel/icons'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { toast } from 'sonner'
 import { Button } from '@/components/ui/button'
@@ -88,7 +88,7 @@ function Session({ initial, total, backTo }: { initial: StudyCard[]; total: numb
   if (!card) {
     return (
       <EmptyState
-        icon={<CheckCircle2 className="size-8 text-primary" />}
+        icon={<CheckCircle2 className="size-10 text-foreground" />}
         title="Session complete"
         description={`You reviewed ${sessionSize} card${sessionSize === 1 ? '' : 's'}.${total > sessionSize ? ` ${total - sessionSize} more are waiting.` : ''}`}
         action={
@@ -117,7 +117,7 @@ function Session({ initial, total, backTo }: { initial: StudyCard[]; total: numb
         <div className="grid w-full grid-cols-2 gap-2 sm:grid-cols-4" role="group" aria-label="How well did you know it?">
           {GRADES.map((g) => (
             <Button key={g.grade} variant={g.variant} disabled={review.isPending} onClick={() => answer(g.grade)}>
-              {g.label} <kbd className="ml-1 text-xs opacity-60">{g.key}</kbd>
+              {g.label} <kbd className="ml-1 border-2 border-current px-1 font-sans text-xs font-bold leading-tight">{g.key}</kbd>
             </Button>
           ))}
         </div>

@@ -11,9 +11,9 @@ export function StatTile({ label, value, icon }: StatTileProps) {
   return (
     <Card>
       <CardContent className="flex items-center gap-4">
-        {icon && <div className="rounded-lg bg-primary/10 p-2 text-primary">{icon}</div>}
+        {icon && <div className="border-2 border-outline bg-primary p-1.5 text-primary-foreground">{icon}</div>}
         <div>
-          <p className="text-2xl font-bold">{value}</p>
+          <p className="text-2xl font-bold tabular-nums">{value}</p>
           <p className="text-sm text-muted-foreground">{label}</p>
         </div>
       </CardContent>

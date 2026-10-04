@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { createUserWithEmailAndPassword, GoogleAuthProvider, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword, signInWithPopup } from 'firebase/auth'
-import { Layers } from 'lucide-react'
+import { PixelLogo } from '@/components/pixel/Logo'
 import { useForm } from 'react-hook-form'
 import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
@@ -68,7 +68,7 @@ export default function Auth({ mode }: { mode: 'login' | 'signup' }) {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-sm">
         <CardHeader className="text-center">
-          <Layers className="mx-auto size-8 text-primary" aria-hidden />
+          <PixelLogo className="mx-auto size-12" />
           <CardTitle className="text-2xl">{isSignup ? 'Create your account' : 'Welcome back'}</CardTitle>
           <CardDescription>{isSignup ? 'Start turning notes into flashcards.' : 'Sign in to keep studying.'}</CardDescription>
         </CardHeader>
@@ -99,7 +99,7 @@ export default function Auth({ mode }: { mode: 'login' | 'signup' }) {
           )}
           <p className="text-center text-sm text-muted-foreground">
             {isSignup ? 'Already have an account? ' : 'New to Flip? '}
-            <Link className="font-medium text-primary underline-offset-4 hover:underline" to={isSignup ? '/login' : '/signup'}>
+            <Link className="font-semibold text-foreground underline decoration-2 underline-offset-4 hover:decoration-dashed" to={isSignup ? '/login' : '/signup'}>
               {isSignup ? 'Log in' : 'Sign up'}
             </Link>
           </p>

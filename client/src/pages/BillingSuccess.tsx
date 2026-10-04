@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { CheckCircle2, Loader2 } from 'lucide-react'
+import { CheckCircle2, Loader2 } from '@/components/pixel/icons'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { useMe } from '@/hooks/useGenerate'
@@ -22,7 +22,7 @@ export default function BillingSuccess() {
   if (me?.plan === 'pro') {
     return (
       <div className="mx-auto flex max-w-md flex-col items-center gap-4 py-12 text-center">
-        <CheckCircle2 className="size-12 text-primary" aria-hidden />
+        <CheckCircle2 className="size-12" aria-hidden />
         <h1 className="text-2xl font-bold">You're on Pro</h1>
         <p className="text-muted-foreground">Unlimited AI generations and PDF uploads are now unlocked.</p>
         <div className="flex gap-2">
@@ -35,7 +35,7 @@ export default function BillingSuccess() {
 
   return (
     <div className="mx-auto flex max-w-md flex-col items-center gap-4 py-12 text-center" role="status">
-      <Loader2 className="size-10 animate-spin text-primary" aria-hidden />
+      <Loader2 className="size-10 animate-spin" aria-hidden />
       <h1 className="text-2xl font-bold">{slow ? 'Still processing your payment' : 'Activating Pro…'}</h1>
       <p className="text-muted-foreground">
         {slow

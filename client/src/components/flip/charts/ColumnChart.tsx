@@ -10,16 +10,7 @@ const W = 640
 const H = 200
 const M = { top: 16, right: 12, bottom: 28, left: 40 }
 const MAX_BAR = 24
-const RADIUS = 4
-
-/** Rounded top, square baseline. */
-function barPath(x: number, y: number, w: number, h: number): string {
-  const r = Math.min(RADIUS, w / 2, h)
-  if (h <= 0) return ''
-  return `M${x},${y + h} V${y + r} Q${x},${y} ${x + r},${y} H${x + w - r} Q${x + w},${y} ${x + w},${y + r} V${y + h} Z`
-}
-
-/** Single-series column chart: bars <= 24px, 4px rounded data end, grown from one baseline. */
+/** Single-series column chart: square pixel bars <= 24px with an ink outline, grown from one baseline. The hovered bar turns ink. */
 export function ColumnChart({ columns, unit, label }: { columns: Column[]; unit: string; label: string }) {
   const [active, setActive] = useState<number | null>(null)
 
@@ -36,8 +27,8 @@ export function ColumnChart({ columns, unit, label }: { columns: Column[]; unit:
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" onPointerLeave={() => setActive(null)}>
         {ticks.map((t) => (
           <g key={t}>
-            <line x1={M.left} x2={W - M.right} y1={y(t)} y2={y(t)} stroke="var(--border)" strokeWidth={1} />
-            <text x={M.left - 8} y={y(t)} textAnchor="end" dominantBaseline="middle" fontSize={11} fill="var(--muted-foreground)">
+            <line x1={M.left} x2={W - M.right} y1={y(t)} y2={y(t)} stroke="var(--outline)" strokeOpacity={0.35} strokeWidth={2} strokeDasharray="3 3" />
+            <text x={M.left - 8} y={y(t)} textAnchor="end" dominantBaseline="middle" fontSize={12} fontFamily="var(--font-sans)" fontWeight={700} fill="var(--muted-foreground)">
               {t.toLocaleString()}
             </text>
           </g>
@@ -48,9 +39,11 @@ export function ColumnChart({ columns, unit, label }: { columns: Column[]; unit:
           const h = M.top + innerH - y(c.value)
           return (
             <g key={c.date}>
-              <path d={barPath(cx - barW / 2, y(c.value), barW, h)} fill="var(--primary)" opacity={active === null || active === i ? 1 : 0.55} />
+              {h > 0 && (
+                <rect x={cx - barW / 2} y={y(c.value)} width={barW} height={h} fill={active === i ? 'var(--foreground)' : 'var(--primary)'} stroke="var(--outline)" strokeWidth={2} />
+              )}
               {(columns.length - 1 - i) % 2 === 0 && (  // every other label, always ending on the latest day
-                <text x={cx} y={H - 8} textAnchor="middle" fontSize={11} fill="var(--muted-foreground)">
+                <text x={cx} y={H - 8} textAnchor="middle" fontSize={12} fontFamily="var(--font-sans)" fontWeight={700} fill="var(--muted-foreground)">
                   {formatDay(c.date)}
                 </text>
               )}
@@ -73,12 +66,12 @@ export function ColumnChart({ columns, unit, label }: { columns: Column[]; unit:
             </g>
           )
         })}
-        <line x1={M.left} x2={W - M.right} y1={y(0)} y2={y(0)} stroke="var(--muted-foreground)" strokeWidth={1} />
+        <line x1={M.left} x2={W - M.right} y1={y(0)} y2={y(0)} stroke="var(--outline)" strokeWidth={3} />
       </svg>
 
       {active !== null && (
         <div
-          className="pointer-events-none absolute top-0 z-10 -translate-x-1/2 whitespace-nowrap rounded-lg border bg-popover px-3 py-2 text-sm shadow-md"
+          className="pointer-events-none absolute top-0 z-10 -translate-x-1/2 whitespace-nowrap border-3 border-outline bg-popover px-3 py-2 text-sm shadow-sm"
           style={{ left: `${Math.min(90, Math.max(10, ((M.left + band * active + band / 2) / W) * 100))}%` }}
         >
           <p className="font-semibold tabular-nums">{columns[active].value} <span className="font-normal text-muted-foreground">{unit}</span></p>

@@ -1,4 +1,4 @@
-import { BarChart3, Flame, Layers, Lock, Target, Trophy } from 'lucide-react'
+import { BarChart3, Flame, Layers, Lock, Target, Trophy } from '@/components/pixel/icons'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -20,8 +20,8 @@ export default function Analytics() {
     return (
       <div className="space-y-6">
         <Skeleton className="h-8 w-40" />
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-24 rounded-xl" />)}</div>
-        <Skeleton className="h-64 rounded-xl" />
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{[0, 1, 2, 3].map((i) => <Skeleton key={i} className="h-24" />)}</div>
+        <Skeleton className="h-64" />
       </div>
     )
   }
@@ -51,7 +51,7 @@ export default function Analytics() {
 
 function Locked() {
   return (
-    <div className="space-y-3 rounded-2xl border border-dashed p-10 text-center">
+    <div className="space-y-3 border-3 border-dashed border-outline bg-card p-10 text-center">
       <Lock className="mx-auto size-8 text-muted-foreground" aria-hidden />
       <h2 className="text-lg font-semibold">Full analytics is a Pro feature</h2>
       <p className="mx-auto max-w-md text-sm text-muted-foreground">
