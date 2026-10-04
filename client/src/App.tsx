@@ -17,6 +17,7 @@ import DeckEditor from '@/pages/DeckEditor'
 import Gallery from '@/pages/Gallery'
 import Generate from '@/pages/Generate'
 import GenerateReview from '@/pages/GenerateReview'
+import Landing from '@/pages/Landing'
 import Pricing from '@/pages/Pricing'
 import Quiz from '@/pages/Quiz'
 import QuizResults from '@/pages/QuizResults'
@@ -36,6 +37,7 @@ export default function App() {
                 <Route path="/signup" element={<Auth mode="signup" />} />
                 {import.meta.env.DEV && <Route path="/gallery" element={<Gallery />} />}
                 <Route element={<AppLayout />}>
+                  <Route path="/" element={<Landing />} />
                   <Route path="/pricing" element={<Pricing />} />
                 </Route>
                 <Route element={<ProtectedRoute />}>
@@ -56,7 +58,8 @@ export default function App() {
                     <Route path="/quiz/:deckId" element={<Quiz />} />
                   </Route>
                 </Route>
-                <Route path="*" element={<Navigate to="/dashboard" replace />} />
+                {/* Unknown addresses go home; the landing page sends signed-in people on to their dashboard. */}
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </BrowserRouter>
             <Toaster />

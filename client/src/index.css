@@ -222,10 +222,10 @@
   .font-pixel { font-family: var(--font-pixel); }
 }
 
-/* Flashcard turn: full width, a sliver, full width again (two visible frames). */
-@keyframes px-squash {
-  0%, 100% { transform: scaleX(1); }
-  50% { transform: scaleX(0.06); }
+/* Landing hero: a card drops onto the pile. */
+@keyframes px-land {
+  from { transform: translateY(-28px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 /* Coin gain: rises 16px and fades out over four frames. */

@@ -34,7 +34,7 @@ export default function AppLayout() {
     <div className="min-h-screen">
       <header className="sticky top-0 z-40 border-b-3 border-outline bg-card">
         <div className="mx-auto flex h-14 max-w-5xl items-center gap-6 px-4">
-          <Link to={user ? '/dashboard' : '/pricing'} className="flex items-center gap-2 font-pixel text-xl font-bold">
+          <Link to={user ? '/dashboard' : '/'} className="flex items-center gap-2 font-pixel text-xl font-bold">
             <PixelLogo className="size-8" /> Flip
           </Link>
 
