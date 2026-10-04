@@ -78,6 +78,38 @@ billingRouter.post('/portal', async (req: AuthedRequest, res) => {
   }
 })
 
+const PRICE_CACHE_MS = 10 * 60 * 1000
+let priceCache: { at: number; body: { amount: number; currency: string; interval: string; label: string } } | null = null
+
+/**
+ * Public: the Pro price as configured in Stripe, so the pricing page always shows what people
+ * are actually charged. Cached for 10 minutes to avoid a Stripe call on every page view.
+ */
+export async function proPrice(_req: Request, res: Response) {
+  if (priceCache && Date.now() - priceCache.at < PRICE_CACHE_MS) return res.json(priceCache.body)
+  try {
+    if (!config.STRIPE_PRO_PRICE_ID) return unavailable(res)
+    const price = await getStripe().prices.retrieve(config.STRIPE_PRO_PRICE_ID)
+    const amount = price.unit_amount ?? 0
+    const major = amount / 100
+    const money = new Intl.NumberFormat('en-PH', {
+      style: 'currency',
+      currency: price.currency.toUpperCase(),
+      minimumFractionDigits: Number.isInteger(major) ? 0 : 2,
+    }).format(major)
+    const interval = price.recurring?.interval ?? 'month'
+    const count = price.recurring?.interval_count ?? 1
+    const per = count === 1 ? interval : `${count} ${interval}s`
+    const body = { amount, currency: price.currency, interval: per, label: `${money}/${per}` }
+    priceCache = { at: Date.now(), body }
+    res.json(body)
+  } catch (err) {
+    if (err instanceof BillingUnavailableError) return unavailable(res)
+    console.error('Price lookup failed')
+    res.status(502).json({ error: 'Could not load the price.', code: 'price_failed' })
+  }
+}
+
 const customerOf = (obj: { customer?: string | { id: string } | null }) =>
   typeof obj.customer === 'string' ? obj.customer : obj.customer?.id
 

@@ -7,7 +7,7 @@ import helmet from 'helmet'
 import mongoose from 'mongoose'
 import { config } from './config.js'
 import { analyticsRouter } from './routes/analytics.js'
-import { billingRouter, stripeWebhook } from './routes/billing.js'
+import { billingRouter, proPrice, stripeWebhook } from './routes/billing.js'
 import { decksRouter } from './routes/decks.js'
 import { generateRouter } from './routes/generate.js'
 import { meRouter } from './routes/me.js'
@@ -64,6 +64,8 @@ app.use('/api/me', meRouter)
 app.use('/api/decks', decksRouter)
 app.use('/api/study', studyRouter)
 app.use('/api/generate', generateRouter)
+// Public (no sign-in) so the pricing page can show it to visitors; registered before the signed-in billing routes.
+app.get('/api/billing/price', proPrice)
 app.use('/api/billing', billingRouter)
 app.use('/api/analytics', analyticsRouter)
 app.use('/api/quiz', quizRouter)

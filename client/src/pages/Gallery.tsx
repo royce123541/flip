@@ -208,7 +208,7 @@ export default function Gallery() {
           />
           <PlanCard
             name="Pro"
-            price="₱149/mo"
+            price="₱20/month"
             description="For serious studying"
             highlighted
             cta="Upgrade"

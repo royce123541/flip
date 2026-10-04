@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
 import { api } from '@/lib/api'
 
 // Only ever navigate to Stripe-hosted pages, whatever the server returns.
@@ -21,3 +21,15 @@ export const usePortal = () =>
   useMutation({
     mutationFn: async () => goToStripe((await api<{ url: string | null }>('/billing/portal', { method: 'POST' })).url),
   })
+
+export interface ProPrice {
+  amount: number
+  currency: string
+  interval: string
+  /** Ready to display, e.g. "₱20/month". */
+  label: string
+}
+
+/** The Pro price straight from Stripe, so the pricing page can never disagree with checkout. */
+export const useProPrice = () =>
+  useQuery({ queryKey: ['pro-price'], queryFn: () => api<ProPrice>('/billing/price'), staleTime: 10 * 60 * 1000, retry: 1 })

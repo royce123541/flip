@@ -96,7 +96,7 @@ Test mode is free: no bank details, no verification, no fees. Keep the **Test mo
    `<-- [200] POST http://localhost:4000/api/billing/webhook`.
 8. Pay with the test card `4242 4242 4242 4242`, any future expiry date, any CVC.
 
-`VITE_PRO_PRICE_LABEL` in `client/.env` is display text only. Keep it in sync with the real Stripe price.
+The pricing page reads the Pro price from Stripe (`STRIPE_PRO_PRICE_ID`), so changing the price in Stripe updates the page automatically.
 
 ## 3. Run
 

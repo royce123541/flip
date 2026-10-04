@@ -2,17 +2,17 @@ import { Link, useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
 import { PlanCard } from '@/components/flip/PlanCard'
 import { useAuth } from '@/hooks/useAuth'
-import { useCheckout } from '@/hooks/useBilling'
+import { useCheckout, useProPrice } from '@/hooks/useBilling'
 import { useMe } from '@/hooks/useGenerate'
 import { ApiError } from '@/lib/api'
 
-const PRO_PRICE = import.meta.env.VITE_PRO_PRICE_LABEL ?? '₱149/month'
 
 export default function Pricing() {
   const { user } = useAuth()
   const navigate = useNavigate()
   const { data: me } = useMe()
   const checkout = useCheckout()
+  const { data: price, isError: priceFailed } = useProPrice()
   const isPro = me?.plan === 'pro'
 
   const upgrade = () => {
@@ -51,7 +51,7 @@ export default function Pricing() {
         />
         <PlanCard
           name="Pro"
-          price={PRO_PRICE}
+          price={price?.label ?? (priceFailed ? 'See checkout' : '…')}
           description="For serious studying"
           highlighted
           cta={isPro ? 'Current plan' : checkout.isPending ? 'Redirecting…' : 'Upgrade to Pro'}
